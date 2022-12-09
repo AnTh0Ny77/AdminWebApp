@@ -1,0 +1,155 @@
+
+.sidebar{
+    position: absolute;
+    width: 20%;
+    min-width: 300px;
+    min-height: 95vh;
+    left: 27px;
+    top: 23px;
+    background: #FFFFFF;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.16);
+    border-radius: 20px;
+}
+
+.exc-sold{
+    width: 103px;
+    height: 44px;
+    background: #FFFFFF;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.14);
+    border-radius: 5px;
+    margin: auto;
+    display: flex;
+    cursor: pointer;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.mini-exc{
+    background: url('../images/exploreCoin.svg');
+    width: 19px;
+    height: 19px;
+    filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.16));
+}
+
+.sold-exc{
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 28px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #074A36;
+}
+
+.panel-image {
+    text-align: center;
+    display: flex;
+}
+
+.panel-image > img {
+    margin: auto;
+}
+
+.exploreSide{
+   
+    margin: 8% auto;
+    width: 139px;
+    height: 30px;
+    background-image:  url('../images/explorelab.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.qr-link{
+
+    margin: 7% auto 1%;
+    height: 93.51px;
+    width: 93.51px;
+    cursor: pointer;
+    background: #FABC43;
+    border-radius: 10px;
+    background-image: url('../images/qr-link.JPG');
+    background-repeat: no-repeat;
+    background-size: 68% 68%;
+    background-position: center;
+}
+
+
+.user-image {
+
+    width: 90%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 50%;
+}
+
+.side-link{
+
+    text-decoration: none;
+    font-family: 'Mirza';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    color: #8A8A8A;
+}
+
+.side-link-actif{
+    text-decoration: none;
+    border: none;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 17px;
+    color: #FABC43;
+}
+
+.side-link-actif:hover{
+    color: #FABC43;
+}
+
+.side-link:hover {
+    color: #FABC43;
+}
+
+.picto-actif{
+    color: #FABC43;
+}
+
+.picto-inactif{
+    color: #8A8A8A;
+}
+
+.wrapper-link{
+    margin-left: 25%;
+}
+
+@media (max-width: 800px){
+    .sidebar{
+        position: absolute;
+        left: 50%;
+        margin-left: -150px !important;
+        min-width: 300px;
+        min-height: 600px;
+        background: #FFFFFF;
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.16);
+        border-radius: 20px;
+    }
+}
+
+@media (max-width: 1100px){
+    
+    .sidebar{
+        position: absolute;
+        margin: auto;
+        min-width: 300px;
+        min-height: 600px;
+        background: #FFFFFF;
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.16);
+        border-radius: 20px;
+    }
+}

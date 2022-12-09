@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+{% block style %}
+<link rel="stylesheet" href="public/css/sidebar.css">
+<link rel="stylesheet" href="public/css/base.css">
+{% endblock %}
+{% block main %}
+
+<main class=" flex-wrap  d-flex wrapper-home justify-content-between">
+	
+  {% if path == 'game' %}
+    	<div class="h2-myeb"> Jeux</div>
+  {% elseif path == 'quest'  %}
+    	<div class="h2-myeb"> Quetes</div>
+  {% elseif path == 'poi'  %}
+    	<div class="h2-myeb"> POI</div>
+  {% elseif path == 'slide'  %}
+    	<div class="h2-myeb"> Slides</div>
+  {% elseif path == 'client'  %}
+    	<div class="h2-myeb"> Client</div>
+  {% elseif path == 'clientgame'  %}
+    	<div class="h2-myeb"> Jeux disponibles pour un client</div>
+  {% endif %}
+  {% include "elements/sidebar.html.twig" %}
+  <div class="explorecard-info">
+	{% if path == 'game' %}
+		<form action="game" method="POST">
+	{% elseif path == 'quest'  %}
+		<form action="quetes" method="POST">
+	{% elseif path == 'poi'  %}
+		<form action="poi" method="POST">
+	{% elseif path == 'slide'  %}
+		<form action="slide" method="POST">
+	{% elseif path == 'cient'  %}
+		<form action="client" method="POST">
+	{% elseif path == 'clientgame'  %}
+		<form action="clientgame" method="POST">
+	{% endif %}
+		
+      <div class="">
+		<div class="title-explorecard"> Zone de texte à copier</div>
+        <div class="subtitle-explorecard">Directement depuis le fichier Json</div>
+		{% if path == 'game' or path == null %}
+			<textarea name="game" class="form-control text-zone my-2" rows="7"></textarea>
+		{% elseif path == 'quest'  %}
+			<textarea name="quest" class="form-control text-zone my-2" rows="7"></textarea>
+		{% elseif path == 'poi'  %}
+			<textarea name="poi" class="form-control text-zone my-2" rows="7"></textarea>
+		{% elseif path == 'slide'  %}
+			<textarea name="slide" class="form-control text-zone my-2" rows="7"></textarea>
+		{% elseif path == 'cient'  %}
+			<textarea name="client" class="form-control text-zone my-2" rows="7"></textarea>
+		{% elseif path == 'clientgame'  %}
+			<textarea name="clientgame" class="form-control text-zone my-2" rows="7"></textarea>
+		{% endif %}
+        
+      </div>
+	  {% if alert %}
+		<div class="alert col-6 mx-auto alert-warning text-center alert-dismissible fade show" role="alert">
+			{{alert}}
+		</div>
+	  {% endif %}
+	  {% if success %}
+		<div class="alert col-6 mx-auto alert-success text-center alert-dismissible fade show" role="alert">
+			{{success}}
+		</div>
+	  {% endif %}
+      <div class="container-validation my-2">
+		<div class="mx-3">
+		</div>
+        <button type="submit" class="btn btn-primary">Soumettre</button>
+      </div>
+      
+    </form>
+   
+  </div>
+
+  <div class="explorecard">
+    <div class="">
+        <div class="title-explorecard"> Manipulation des scripts</div>
+        <div class="subtitle-explorecard">Attention entre chaque session de creation il faut repartir a zero !</div>
+        
+    </div>
+    {% if export %}
+	<div class="d-flex col-12 my-4 justify-content-around">
+		<a href="instructions.txt" download class="side-link mx-4"><i class="fas fa-file-download"></i> Télécharger le fichier d isntructions</a>
+		<a href="export.sql" download class="side-link mx-4"><i class="fad fa-database"></i> Télécharger le fichier SQL</a>
+		<a href="game?delete=delete" class="side-link mx-4"><i class="fas fa-trash-alt"></i> Remettre a zero</a>
+	</div>
+	{% else %}
+	<div class="d-flex col-12 my-4 justify-content-around">
+		<div class="title-explorecard"> Vous n' avez pas de scripts à télécharger</div>
+	</div>
+	{% endif %}
+  </div>
+</main>
+
+{% endblock %}
+{% block script %}
+{% endblock %}

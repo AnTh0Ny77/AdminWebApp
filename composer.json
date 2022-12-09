@@ -1,0 +1,11 @@
+{
+    "autoload": {
+        "psr-4" : {"Src\\" : "Src"}
+    },
+    "require": {
+        "twig/twig": "3.0",
+        "guzzlehttp/guzzle": "7.0",
+        "stripe/stripe-php": "^9.6",
+        "ifsnop/mysqldump-php": "^2.9"
+    }
+}
