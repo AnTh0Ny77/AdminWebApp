@@ -3,9 +3,10 @@
 namespace Src\Controllers;
 require  '././vendor/autoload.php';
 
-use Src\Controllers\BaseController;
 use PDO;
 use PDOException;
+use Ifsnop\Mysqldump\Mysqldump;
+use Src\Controllers\BaseController;
 
 class HomeController extends BaseController
 {
@@ -50,6 +51,7 @@ class HomeController extends BaseController
 							self::insertGame($game , $pdo);
 							$dump = new \Ifsnop\Mysqldump\Mysqldump('mysql:dbname=meb;host=localhost', 'root','' , 
 							['no-create-info' => true ,
+							'default-character-set' => Mysqldump::UTF8MB4 ,
 							  'exclude-tables' => [ 'ranks' , 'type_slide' , 'type_poi'] , 
 							 
 							]);
@@ -60,17 +62,17 @@ class HomeController extends BaseController
 								return $row;
 							});
 							$dump->start('export.sql');	
+							self::generateDeleteScript($pdo);
+							self::prepend_sql_file('delete.sql', 'export.sql');
 							self::exportTxt($myfile ,self::returnInstructionGame($game));
 							$success = ' le Jeux a été inséré dans la base de donnée de test avec succès';
 							$export = self::exportPresence();	
-						
 					}
 				}else{
 					
 					$alert = 'Aucune donnés de jeux présentes !';
 				}
 			}
-			
 			unset($_SESSION['postdata']);
 		}
 
@@ -81,6 +83,7 @@ class HomeController extends BaseController
 					$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 					unlink('export.sql');
 					unlink('instructions.txt');
+					unlink('delete.sql');
 					self::empty('games' , $pdo);
 					self::empty('quest' , $pdo);
 					self::empty('poi' , $pdo);
@@ -149,6 +152,7 @@ class HomeController extends BaseController
 					}
 					$dump = new \Ifsnop\Mysqldump\Mysqldump('mysql:dbname=meb;host=localhost', 'root','' , 
 							['no-create-info' => true ,
+							'default-character-set' => Mysqldump::UTF8MB4 ,
 							  'exclude-tables' => [ 'ranks' , 'type_slide' , 'type_poi']
 							]);
 							$dump->setTransformTableRowHook(function ($tableName, array $row) {
@@ -157,7 +161,9 @@ class HomeController extends BaseController
 								}
 								return $row;
 							});
+					self::generateDeleteScript($pdo);
 					$dump->start('export.sql');	
+					self::prepend_sql_file('delete.sql', 'export.sql');
 					$success = 'la/les quetes ont étés insérées avec success dans la base de données de test ';
 				}
 				unset($_SESSION['postdata']);
@@ -222,6 +228,7 @@ class HomeController extends BaseController
 					}
 					$dump = new \Ifsnop\Mysqldump\Mysqldump('mysql:dbname=meb;host=localhost', 'root','' , 
 							['no-create-info' => true ,
+							'default-character-set' => Mysqldump::UTF8MB4 ,
 							  'exclude-tables' => [ 'ranks' , 'type_slide' , 'type_poi'] 
 							]);
 							$dump->setTransformTableRowHook(function ($tableName, array $row) {
@@ -230,7 +237,9 @@ class HomeController extends BaseController
 								}
 								return $row;
 							});
+					self::generateDeleteScript($pdo);
 					$dump->start('export.sql');
+					self::prepend_sql_file('delete.sql', 'export.sql');
 					$success = ' le/les POI ont étés insérés avec succes dans la base de donnée de test';	
 				}
 			}
@@ -296,6 +305,7 @@ class HomeController extends BaseController
 					}
 					$dump = new \Ifsnop\Mysqldump\Mysqldump('mysql:dbname=meb;host=localhost', 'root','' , 
 							['no-create-info' => true ,
+							'default-character-set' => Mysqldump::UTF8MB4 ,
 							  'exclude-tables' => [ 'ranks' , 'type_slide' , 'type_poi'] 
 							]);
 							$dump->setTransformTableRowHook(function ($tableName, array $row) {
@@ -304,7 +314,9 @@ class HomeController extends BaseController
 								}
 								return $row;
 							});
+					self::generateDeleteScript($pdo);
 					$dump->start('export.sql');
+					self::prepend_sql_file('delete.sql', 'export.sql');
 					$success = ' le/les Slides ont étés insérés avec succes dans la base de donnée de test';
 				}
 			}
@@ -367,6 +379,7 @@ class HomeController extends BaseController
 					}
 					$dump = new \Ifsnop\Mysqldump\Mysqldump('mysql:dbname=meb;host=localhost', 'root','' , 
 							['no-create-info' => true ,
+							'default-character-set' => Mysqldump::UTF8MB4 ,
 							  'exclude-tables' => [ 'ranks' , 'type_slide' , 'type_poi'] 
 							]);
 							$dump->setTransformTableRowHook(function ($tableName, array $row) {
@@ -375,7 +388,9 @@ class HomeController extends BaseController
 								}
 								return $row;
 							});
+					self::generateDeleteScript($pdo);
 					$dump->start('export.sql');
+					self::prepend_sql_file('delete.sql', 'export.sql');
 					$success = ' le/les relations client/jeux ont étés insérées avec succès';
 				}
 
@@ -697,4 +712,60 @@ class HomeController extends BaseController
 		header("Location: ".$path);
 		exit;
 	}
+
+
+	public static function generateDeleteScript(PDO $pdo) {
+		$tables = array("games", "poi", "quest", "slide", "user", "client_games");
+		$ids = array();
+	
+		// Générer le script de désactivation des contraintes de clé étrangère
+		$disable_fk_check = "SET FOREIGN_KEY_CHECKS=0;\n";
+	
+		// Récupérer les clés primaires "id" de chaque table
+		foreach ($tables as $table) {
+			$stmt = $pdo->prepare("SELECT id FROM `$table`");
+			$stmt->execute();
+			$tableIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+			if (count($tableIds) > 0) {
+				$ids[$table] = $tableIds;
+			}
+		}
+	
+		// Générer le script de suppression pour chaque table qui contient des IDs
+		$delete_script = '';
+		foreach ($tables as $table) {
+			if (in_array($table, ['games', 'poi', 'quest', 'slide', 'user', 'client_games']) && isset($ids[$table]) && count($ids[$table]) > 0) {
+				$delete_script .= "DELETE FROM `$table` WHERE id IN (".implode(",", $ids[$table]).");\n";
+			}
+		}
+	
+		// Générer le script de réactivation des contraintes de clé étrangère
+		$enable_fk_check = "SET FOREIGN_KEY_CHECKS=1;\n";
+	
+		// Assembler le script complet
+		$script = $disable_fk_check . $delete_script . $enable_fk_check;
+	
+		// Enregistrer le script SQL dans un fichier
+		$filename = "delete.sql";
+		file_put_contents($filename, $script);
+	}
+
+	public static function prepend_sql_file($source_file, $target_file) {
+		// Ouvrir le fichier source et le lire
+		$source_handle = fopen($source_file, "r");
+		$source_content = fread($source_handle, filesize($source_file));
+		fclose($source_handle);
+	
+		// Ouvrir le fichier cible et le lire
+		$target_handle = fopen($target_file, "r");
+		$target_content = fread($target_handle, filesize($target_file));
+		fclose($target_handle);
+	
+		// Ouvrir le fichier cible pour l'écriture et y écrire le contenu du fichier source suivi du contenu précédent du fichier cible
+		$target_handle = fopen($target_file, "w");
+		fwrite($target_handle, $source_content . $target_content);
+		fclose($target_handle);
+	}
+	
+	
 }

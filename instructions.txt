@@ -1,5 +1,0 @@
- 
-			Enregistrer l image : Cover-jeu-BTW.png dans la destination suivante /var/www/explorelab.app/images/games/  
-			directement sur le server de production 
-			
-			
