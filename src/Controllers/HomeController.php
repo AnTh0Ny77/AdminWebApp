@@ -588,6 +588,9 @@ class HomeController extends BaseController
 			case 'DUR':
 				$type = 7 ;
 				break;
+			case 'END':
+				$type = 8 ;
+				break;
 		}
 		$output_gps = explode(';' , $poi['GPS']);
 		$gps = '{ "lat" : '.$output_gps[0].' , "lng" : '.$output_gps[1].' }';
