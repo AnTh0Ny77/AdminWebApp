@@ -40,6 +40,10 @@ switch ($globalRequest){
     case '/AdminWebApp/clientgame'.$getData:
         echo home::clientgames();
         break;
+
+    case '/AdminWebApp/typepoi'.$getData:
+        echo home::typepoi();
+        break;
     
     default:
         header('HTTP/1.0 404 not found');

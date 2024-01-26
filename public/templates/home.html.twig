@@ -18,6 +18,8 @@
     	<div class="h2-myeb"> Client</div>
   {% elseif path == 'clientgame'  %}
     	<div class="h2-myeb"> Jeux disponibles pour un client</div>
+	{% elseif path == 'typepoi'  %}
+    	<div class="h2-myeb"> Type de POI</div>
   {% endif %}
   {% include "elements/sidebar.html.twig" %}
   <div class="explorecard-info">
@@ -33,6 +35,8 @@
 		<form action="client" method="POST">
 	{% elseif path == 'clientgame'  %}
 		<form action="clientgame" method="POST">
+	{% elseif path == 'typepoi'  %}
+		<form action="typepoi" method="POST">
 	{% endif %}
 		
       <div class="">
@@ -49,6 +53,8 @@
 		{% elseif path == 'cient'  %}
 			<textarea name="client" class="form-control text-zone my-2" rows="7"></textarea>
 		{% elseif path == 'clientgame'  %}
+			<textarea name="clientgame" class="form-control text-zone my-2" rows="7"></textarea>
+		{% elseif path == 'typepoi'  %}
 			<textarea name="clientgame" class="form-control text-zone my-2" rows="7"></textarea>
 		{% endif %}
         

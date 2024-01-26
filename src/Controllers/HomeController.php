@@ -411,6 +411,67 @@ class HomeController extends BaseController
         );
 	}
 
+
+	public static function typepoi(){
+		$path = 'typepoi'; 
+		$alert = false ;
+		$success = false ;
+		$myfile = fopen("instructions.txt", "a");
+		self::init();
+		self::stopRepost('typepoi');
+		$export = self::exportPresence();
+		if (array_key_exists('postdata', $_SESSION)) {
+			if (!empty($_SESSION['postdata']['typepoi'])){
+				if (!json_decode($_SESSION['postdata']['typepoi'])) {
+					unset($_SESSION['postdata']);
+					self::alertMaker('typepoi' , 'Le tableau json n est pas conforme ( attention aux espaces blanc en debut et fin de tableau )');
+				}
+			}
+
+			$typePoi = json_decode($_SESSION['postdata']['typepoi']);
+				if (!empty($typePoi)) {
+					$pdo = new PDO('mysql:dbname=meb;host=localhost' , 'root' , '', array(1002 => 'SET NAMES utf8mb4'));
+					$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+					
+					foreach ($typePoi as $type) {
+						$type = (array) $type;
+						self::insertypePoi($type , $pdo);	
+					}
+					$dump = new \Ifsnop\Mysqldump\Mysqldump('mysql:dbname=meb;host=localhost', 'root','' , 
+							['no-create-info' => true ,
+							'default-character-set' => Mysqldump::UTF8MB4 ,
+							  'exclude-tables' => [ 'ranks' , 'type_slide' , 'type_poi'] 
+							]);
+							$dump->setTransformTableRowHook(function ($tableName, array $row) {
+								if ($tableName === 'client_games' or $tableName === 'user' ) {
+									$row['id'] = null;
+								}
+								return $row;
+							});
+					self::generateDeleteScript($pdo);
+					$dump->start('export.sql');
+					self::prepend_sql_file('delete.sql', 'export.sql');
+					$success = ' le/les relations client/jeux ont étés insérées avec succès';
+				}
+
+		}
+		unset($_SESSION['postdata']);
+		if (isset($_SESSION['alert'])) {
+			$alert = $_SESSION['alert'];
+		}
+		unset($_SESSION['alert']);
+		fclose($myfile);
+		return self::$twig->render(
+            'home.html.twig',[    
+				'alert' => $alert,
+				'path' => $path , 
+				'export' => $export , 
+				'success' => $success
+            ]
+        );
+	}
+
+
     public static function error404()
     {
         self::init();
@@ -460,6 +521,16 @@ class HomeController extends BaseController
 		return $pdo->lastInsertID();
     }
 
+	public static function insertypePoi( array $type ,  $pdo){
+        $request = $pdo->prepare('INSERT INTO type_poi (  name , color , cover_path)
+        VALUES ( :nametype , :color ,  :cover_path)');
+        $request->bindValue(":nametype" , $type['Name']);
+        $request->bindValue(":name" , $type['Color']);
+        $request->bindValue(":cover_path" , $type['Cover']);
+		$request->execute();
+		return $pdo->lastInsertID();
+    }
+
 	public static  function insertGame(array $game , $pdo){
 		$request = $pdo->prepare('INSERT INTO games (id ,  name , destination , cover_path , rules)
         VALUES (:id ,:name , :destination , :cover_path , :rules)');
@@ -476,6 +547,7 @@ class HomeController extends BaseController
 		$request = $pdo->prepare('INSERT INTO client_games (  user_id , game_id , cost )
         VALUES ( :user_id , :game_id , :cost)');
 		$request->bindValue(":user_id" , $game['NameUser']);
+		
 		$request->bindValue(":game_id" , $game['NameJeux']);
 		$request->bindValue(":cost" , $game['Cost']);
 		$request->execute();
