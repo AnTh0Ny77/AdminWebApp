@@ -449,13 +449,14 @@ class HomeController extends BaseController
 	
 
     public static function insertQuest( array $quest ,  $pdo){
-        $request = $pdo->prepare('INSERT INTO quest ( id ,  game_id , name , color , response_quest)
-        VALUES ( :id , :game_id , :name , :color , :response_quest)');
+        $request = $pdo->prepare('INSERT INTO quest ( id ,  game_id , name , color , response_quest , text_quest)
+        VALUES ( :id , :game_id , :name , :color , :response_quest , :text_quest)');
 		$request->bindValue(":id" , $quest['ID']);
         $request->bindValue(":game_id" , $quest['Game']);
         $request->bindValue(":name" , $quest['Name']);
         $request->bindValue(":color" , $quest['Color']);
         $request->bindValue(":response_quest" , $quest['Reponse']);
+		$request->bindValue(":text_quest" , $quest['text_quest']);
 		$request->execute();
 		return $pdo->lastInsertID();
     }
@@ -585,7 +586,7 @@ class HomeController extends BaseController
 	
 	public static function updateQuest(array $quest,$pdo){
 
-		$request = $pdo->prepare('UPDATE quest SET game_id = ? , color = ? , response_quest = ?
+		$request = $pdo->prepare('UPDATE quest SET game_id = ? , color = ? , response_quest = ? , text_quest = ? 
 		WHERE name = ?  ');
 		$update = $pdo->execute($quest);
 	}
