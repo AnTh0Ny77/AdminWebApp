@@ -440,7 +440,7 @@ class HomeController extends BaseController
 					$dump = new \Ifsnop\Mysqldump\Mysqldump('mysql:dbname=meb;host=localhost', 'root','' , 
 							['no-create-info' => true ,
 							'default-character-set' => Mysqldump::UTF8MB4 ,
-							  'exclude-tables' => [ 'ranks' , 'type_slide' , 'type_poi'] 
+							  'exclude-tables' => [ 'ranks' , 'type_slide' ] 
 							]);
 							$dump->setTransformTableRowHook(function ($tableName, array $row) {
 								if ($tableName === 'client_games' or $tableName === 'user' ) {
