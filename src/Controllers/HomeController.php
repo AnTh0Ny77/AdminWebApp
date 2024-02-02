@@ -564,31 +564,30 @@ class HomeController extends BaseController
 	}
 
 	public static  function insertPoi(array $poi , $pdo){
-		
 		$type = 1 ;
-		switch ($poi['Type']) {
-			case 'FLS':
+		switch ($poi['Type']){
+			case 1:
 				$type = 1 ;
 				break;
-			case 'CUL':
+			case 2:
 				$type = 2 ;
 				break;
-			case 'OBS':
+			case 3:
 				$type = 3 ;
 				break;
-			case 'ENG':
+			case 4:
 				$type = 4 ;
 				break;
-			case 'ORI':
+			case 5:
 				$type = 5 ;
 				break;
-			case 'SPO':
+			case 6:
 				$type = 6 ;
 				break;
-			case 'DUR':
+			case 7:
 				$type = 7 ;
 				break;
-			case 'END':
+			case 8:
 				$type = 8 ;
 				break;
 		}
