@@ -380,7 +380,7 @@ class HomeController extends BaseController
 					$dump = new \Ifsnop\Mysqldump\Mysqldump('mysql:dbname=meb;host=localhost', 'root','' , 
 							['no-create-info' => true ,
 							'default-character-set' => Mysqldump::UTF8MB4 ,
-							  'exclude-tables' => [ 'ranks' , 'type_slide' ] 
+							  'exclude-tables' => [ 'ranks' , 'type_slide', 'type_poi'] 
 							]);
 							$dump->setTransformTableRowHook(function ($tableName, array $row) {
 								if ($tableName === 'client_games' or $tableName === 'user' ) {
@@ -419,6 +419,7 @@ class HomeController extends BaseController
 		$myfile = fopen("instructions.txt", "a");
 		self::init();
 		self::stopRepost('typepoi');
+		
 		$export = self::exportPresence();
 		if (array_key_exists('postdata', $_SESSION)) {
 			if (!empty($_SESSION['postdata']['typepoi'])){
@@ -428,6 +429,7 @@ class HomeController extends BaseController
 				}
 			}
 
+			
 			$typePoi = json_decode($_SESSION['postdata']['typepoi']);
 				if (!empty($typePoi)) {
 					$pdo = new PDO('mysql:dbname=meb;host=localhost' , 'root' , '', array(1002 => 'SET NAMES utf8mb4'));
@@ -523,10 +525,11 @@ class HomeController extends BaseController
     }
 
 	public static function insertypePoi( array $type ,  $pdo){
-        $request = $pdo->prepare('INSERT INTO type_poi (  name , color , cover_path)
-        VALUES ( :nametype , :color ,  :cover_path)');
-        $request->bindValue(":nametype" , $type['Name']);
-        $request->bindValue(":name" , $type['Color']);
+        $request = $pdo->prepare('INSERT INTO atype_poi ( id , name , color , cover_path)
+        VALUES (:id , :name , :color , :cover_path)');
+		$request->bindValue(":id" , $type['Id']);
+        $request->bindValue(":name" , $type['Name']);
+        $request->bindValue(":color" , $type['Color']);
         $request->bindValue(":cover_path" , $type['Cover']);
 		$request->execute();
 		return $pdo->lastInsertID();
@@ -548,7 +551,6 @@ class HomeController extends BaseController
 		$request = $pdo->prepare('INSERT INTO client_games (  user_id , game_id , cost )
         VALUES ( :user_id , :game_id , :cost)');
 		$request->bindValue(":user_id" , $game['NameUser']);
-		
 		$request->bindValue(":game_id" , $game['NameJeux']);
 		$request->bindValue(":cost" , $game['Cost']);
 		$request->execute();
@@ -724,14 +726,12 @@ class HomeController extends BaseController
 			
 			';
 		} 
-
 		return $txt;
 	}
 
 	
 	public static function returnInstructionPoi(array $poi){
 		$txt = '';
-		
 		if (!empty($poi['Clue'])) {
 			$txt .= '
 			Enregistrer l image : ' . $poi['Clue'] . 
@@ -773,6 +773,7 @@ class HomeController extends BaseController
 		
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$_SESSION['postdata'] = $_POST;
+			
 			unset($_POST);
 			header("Location: ".$path);
 			exit;
@@ -790,7 +791,7 @@ class HomeController extends BaseController
 
 
 	public static function generateDeleteScript(PDO $pdo) {
-		$tables = array("games", "poi", "quest", "slide", "user", "client_games");
+		$tables = array("games", "poi", "quest", "slide", "user", "atype_poi" , "client_games");
 		$ids = array();
 	
 		// Générer le script de désactivation des contraintes de clé étrangère
@@ -809,7 +810,7 @@ class HomeController extends BaseController
 		// Générer le script de suppression pour chaque table qui contient des IDs
 		$delete_script = '';
 		foreach ($tables as $table) {
-			if (in_array($table, ['games', 'poi', 'quest', 'slide', 'user', 'client_games']) && isset($ids[$table]) && count($ids[$table]) > 0) {
+			if (in_array($table, ['games', 'poi', 'quest', 'atype_poi' , 'slide', 'user', 'client_games']) && isset($ids[$table]) && count($ids[$table]) > 0) {
 				$delete_script .= "DELETE FROM `$table` WHERE id IN (".implode(",", $ids[$table]).");\n";
 			}
 		}
