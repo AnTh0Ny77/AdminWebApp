@@ -64,6 +64,7 @@ class HomeController extends BaseController
 							$dump->start('export.sql');	
 							self::generateDeleteScript($pdo);
 							self::prepend_sql_file('delete.sql', 'export.sql');
+							self::renameTypePoi();
 							self::exportTxt($myfile ,self::returnInstructionGame($game));
 							$success = ' le Jeux a été inséré dans la base de donnée de test avec succès';
 							$export = self::exportPresence();	
@@ -164,6 +165,7 @@ class HomeController extends BaseController
 					self::generateDeleteScript($pdo);
 					$dump->start('export.sql');	
 					self::prepend_sql_file('delete.sql', 'export.sql');
+					self::renameTypePoi();
 					$success = 'la/les quetes ont étés insérées avec success dans la base de données de test ';
 				}
 				unset($_SESSION['postdata']);
@@ -240,6 +242,7 @@ class HomeController extends BaseController
 					self::generateDeleteScript($pdo);
 					$dump->start('export.sql');
 					self::prepend_sql_file('delete.sql', 'export.sql');
+					self::renameTypePoi();
 					$success = ' le/les POI ont étés insérés avec succes dans la base de donnée de test';	
 				}
 			}
@@ -317,6 +320,7 @@ class HomeController extends BaseController
 					self::generateDeleteScript($pdo);
 					$dump->start('export.sql');
 					self::prepend_sql_file('delete.sql', 'export.sql');
+					self::renameTypePoi();
 					$success = ' le/les Slides ont étés insérés avec succes dans la base de donnée de test';
 				}
 			}
@@ -391,6 +395,7 @@ class HomeController extends BaseController
 					self::generateDeleteScript($pdo);
 					$dump->start('export.sql');
 					self::prepend_sql_file('delete.sql', 'export.sql');
+					self::renameTypePoi();
 					$success = ' le/les relations client/jeux ont étés insérées avec succès';
 				}
 
@@ -453,6 +458,7 @@ class HomeController extends BaseController
 					self::generateDeleteScript($pdo);
 					$dump->start('export.sql');
 					self::prepend_sql_file('delete.sql', 'export.sql');
+					self::renameTypePoi();
 					$success = ' le/les relations client/jeux ont étés insérées avec succès';
 				}
 
@@ -591,6 +597,9 @@ class HomeController extends BaseController
 				break;
 			case 8:
 				$type = 8 ;
+				break;
+			default	:
+				$type = $poi['Type'] ;
 				break;
 		}
 		$output_gps = explode(';' , $poi['GPS']);
@@ -841,6 +850,27 @@ class HomeController extends BaseController
 		$target_handle = fopen($target_file, "w");
 		fwrite($target_handle, $source_content . $target_content);
 		fclose($target_handle);
+	}
+
+	public static function renameTypePoi(){
+
+		 // Nom de la table à exporter
+		 $tableName = 'atypepoi';
+
+		 // Nom souhaité pour la table dans le fichier SQL
+		 $newTableName = 'typepoi';
+
+		 // Nom du fichier de sortie
+		 $outputFile = 'export.sql';
+	 
+		 // Charge le contenu du fichier exporté
+		 $sqlContent = file_get_contents($outputFile);
+	 
+		 // Remplace le nom de la table dans le contenu SQL
+		 $sqlContent = str_replace("`$tableName`", "`$newTableName`", $sqlContent);
+	 
+		 // Réécrit le contenu dans le fichier exporté
+		 file_put_contents($outputFile, $sqlContent);
 	}
 	
 	
