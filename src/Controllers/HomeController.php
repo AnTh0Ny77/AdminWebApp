@@ -855,10 +855,10 @@ class HomeController extends BaseController
 	public static function renameTypePoi(){
 
 		 // Nom de la table à exporter
-		 $tableName = 'atypepoi';
+		 $tableName = 'atype_poi';
 
 		 // Nom souhaité pour la table dans le fichier SQL
-		 $newTableName = 'typepoi';
+		 $newTableName = 'type_poi';
 
 		 // Nom du fichier de sortie
 		 $outputFile = 'export.sql';
