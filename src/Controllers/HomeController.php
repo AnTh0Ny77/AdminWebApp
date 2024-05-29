@@ -32,6 +32,7 @@ class HomeController extends BaseController
 					self::alertMaker('game' , 'Le tableau json n est pas conforme ( attention aux espaces blanc en debut et fin de tableau )');
 				}
 				$game_array = json_decode($_SESSION['postdata']['game']);
+				$game_array = self::trimArrayKeys($game_array);
 				if (!empty($game_array)) {
 					foreach ($game_array as $game) {
 						
@@ -126,6 +127,7 @@ class HomeController extends BaseController
 					self::alertMaker('quetes' , 'Le tableau json n est pas conforme ( attention aux espaces blanc en debut et fin de tableau )');
 				}
 				$quest_array = json_decode($_SESSION['postdata']['quest']);
+				$quest_array = self::trimArrayKeys($quest_array);
 				if (!empty($quest_array)) {
 					$pdo = new PDO('mysql:dbname=meb;host=localhost' , 'root' , '', array(1002 => 'SET NAMES utf8mb4'));
 					$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -202,6 +204,7 @@ class HomeController extends BaseController
 					self::alertMaker('poi' , 'Le tableau json n est pas conforme ( attention aux espaces blanc en debut et fin de tableau )');
 				}
 				$poi_array = json_decode($_SESSION['postdata']['poi']);
+				$poi_array = self::trimArrayKeys($poi_array);
 				if (!empty($poi_array)) {
 					$pdo = new PDO('mysql:dbname=meb;host=localhost' , 'root' , '', array(1002 => 'SET NAMES utf8mb4'));
 					$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -360,6 +363,7 @@ class HomeController extends BaseController
 			}
 
 			$clientgames = json_decode($_SESSION['postdata']['clientgame']);
+			$clientgames = self::trimArrayKeys($clientgames);
 				if (!empty($clientgames)) {
 					$pdo = new PDO('mysql:dbname=meb;host=localhost' , 'root' , '', array(1002 => 'SET NAMES utf8mb4'));
 					$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -437,6 +441,7 @@ class HomeController extends BaseController
 
 			
 			$typePoi = json_decode($_SESSION['postdata']['typepoi']);
+			$typePoi = self::trimArrayKeys($typePoi);
 				if (!empty($typePoi)) {
 					$pdo = new PDO('mysql:dbname=meb;host=localhost' , 'root' , '', array(1002 => 'SET NAMES utf8mb4'));
 					$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
