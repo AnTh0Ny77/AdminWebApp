@@ -279,6 +279,7 @@ class HomeController extends BaseController
 				}
 
 				$slide_array = json_decode($_SESSION['postdata']['slide']);
+				$slide_array = self::trimArrayKeys($slide_array);
 				if (!empty($slide_array)) {
 					$pdo = new PDO('mysql:dbname=meb;host=localhost' , 'root' , '', array(1002 => 'SET NAMES utf8mb4'));
 					$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -712,8 +713,25 @@ class HomeController extends BaseController
 		return false ;
 	}
 
+	public static function trimArrayKeys($array) {
+		$trimmedArray = [];
+		foreach ($array as $key => $value) {
+			
+			$trimmedKey = trim($key);
+			
+			if (is_array($value)) {
+				$value = self::trimArrayKeys($value);
+			}
+			
+			$trimmedArray[$trimmedKey] = $value;
+		}
+		return $trimmedArray;
+	}
+	
+
 	public static function checkSlide($slide){
-		if (strlen($slide['Name']) < 3 or  strlen($slide['Name']) > 250) {
+		
+		if (strlen($slide['Name']) < 3 or  strlen($slide['Name']) > 450) {
 			return 'le nom du slide  '.$slide['Name'].' semble comporter un problème';
 		};
 		if (empty($slide['Step'])) {
